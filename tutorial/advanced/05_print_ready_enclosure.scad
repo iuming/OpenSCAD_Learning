@@ -17,6 +17,13 @@ pcb_depth     = 35;
 pcb_thickness = 1.6;
 pcb_clearance = 3.0;   // 底部走线空间
 
+
+// ---- 全局展示尺寸（与 enclosure_base()/enclosure_lid() 内部计算保持一致） ----
+inner_w = pcb_width  + 2 * tolerance;
+inner_d = pcb_depth  + 2 * tolerance;
+outer_w = inner_w + 2 * wall_thickness;
+outer_d = inner_d + 2 * wall_thickness;
+
 // ---- 圆角盒子 (minkowski 方法) ----
 module rounded_box(w, d, h, r) {
     minkowski() {

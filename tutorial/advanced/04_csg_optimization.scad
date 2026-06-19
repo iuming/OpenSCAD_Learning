@@ -25,16 +25,12 @@ module detailed_part() {
 
 // ---- 性能技巧 2: 缓存重复对象 ----
 module bolt_pattern(n, radius, hole_d) {
-    // ❌ 不好: 每次重复计算
-    // union() { for(i=[0:n-1]) ... }
-
-    // ✅ 好: 先定义一个,再复制
-    hole = cylinder(r = hole_d / 2, h = 10, center = true, $fn = 20);
-
+    // ❌ 不好: 在每个调用点手写同一组孔位，容易重复出错。
+    // ✅ 好: 把孔位阵列封装成模块；调用方只需传入一个子对象。
     for (i = [0 : n - 1]) {
         rotate([0, 0, i * 360 / n])
             translate([radius, 0, 0])
-                children();  // 使用 children 避免重复计算
+                children();  // children() 里放要复制的孔或螺钉
     }
 }
 

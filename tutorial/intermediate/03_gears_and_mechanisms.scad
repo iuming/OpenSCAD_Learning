@@ -8,7 +8,7 @@ $fn = 60;
 // ---- 完整的渐开线直齿轮 ----
 module involute_gear(
     teeth         = 20,
-    module        = 2,     // 模数 = 节圆直径/齿数
+    gear_module   = 2,     // 模数 = 节圆直径/齿数
     height        = 8,
     pressure_angle = 20,
     backlash      = 0.05,
@@ -16,13 +16,13 @@ module involute_gear(
     helix         = 0      // 斜齿轮螺旋角
 ) {
     // 基本尺寸
-    pr = module * teeth / 2;       // 节圆半径
-    ar = pr + module;              // 齿顶圆半径
-    dr = pr - 1.25 * module;       // 齿根圆半径
+    pr = gear_module * teeth / 2;       // 节圆半径
+    ar = pr + gear_module;              // 齿顶圆半径
+    dr = pr - 1.25 * gear_module;       // 齿根圆半径
     br = pr * cos(pressure_angle);  // 基圆半径
 
     // 齿厚 (考虑 backlash)
-    tooth_thickness = module * PI / 2 - backlash;
+    tooth_thickness = gear_module * PI / 2 - backlash;
 
     module tooth_profile() {
         // 渐开线齿廓
@@ -36,13 +36,13 @@ module involute_gear(
             // 齿形: 简化为梯形近似
             hull() {
                 translate([pr, tooth_thickness / 2, 0])
-                    circle(r = module * 0.3, $fn = 8);
+                    circle(r = gear_module * 0.3, $fn = 8);
                 translate([ar, tooth_thickness * 0.3, 0])
-                    circle(r = module * 0.1, $fn = 8);
+                    circle(r = gear_module * 0.1, $fn = 8);
                 translate([pr, -tooth_thickness / 2, 0])
-                    circle(r = module * 0.3, $fn = 8);
+                    circle(r = gear_module * 0.3, $fn = 8);
                 translate([ar, -tooth_thickness * 0.3, 0])
-                    circle(r = module * 0.1, $fn = 8);
+                    circle(r = gear_module * 0.1, $fn = 8);
             }
         }
     }
@@ -80,11 +80,11 @@ module involute_gear(
 // ---- 齿条 ----
 module rack(
     teeth    = 15,
-    module   = 2,
+    gear_module = 2,
     height   = 6,
     width    = 10
 ) {
-    pitch = PI * module;
+    pitch = PI * gear_module;
 
     difference() {
         cube([pitch * teeth, width, height]);
@@ -108,7 +108,7 @@ module planetary_gear_set() {
 
     // 太阳轮 (输入)
     color("gold")
-        involute_gear(teeth = sun_teeth, module = mod,
+        involute_gear(teeth = sun_teeth, gear_module = mod,
                       height = 5, bore = 3);
 
     // 行星轮 × 3
@@ -116,7 +116,7 @@ module planetary_gear_set() {
         rotate([0, 0, i * 120])
             translate([(sun_teeth + planet_teeth) * mod / 2, 0, 0]) {
                 color("silver")
-                    involute_gear(teeth = planet_teeth, module = mod,
+                    involute_gear(teeth = planet_teeth, gear_module = mod,
                                   height = 5, bore = 2);
             }
     }
@@ -133,18 +133,18 @@ module planetary_gear_set() {
 // ---- 展示 ----
 // 齿轮啮合演示
 translate([-60, 0, 0]) {
-    involute_gear(teeth = 15, module = 2, height = 6, bore = 4);
+    involute_gear(teeth = 15, gear_module = 2, height = 6, bore = 4);
     translate([(15 + 10) * 2 / 2, 0, 0])
         rotate([0, 0, 180 / 10])
-            involute_gear(teeth = 10, module = 2, height = 6, bore = 3);
+            involute_gear(teeth = 10, gear_module = 2, height = 6, bore = 3);
 }
 
 // 齿轮-齿条
 translate([-10, -30, 0]) {
-    involute_gear(teeth = 12, module = 2, height = 8, bore = 3);
+    involute_gear(teeth = 12, gear_module = 2, height = 8, bore = 3);
     translate([-12 * 2 / 2, -12 * 2 / 2 - 0.5, 0])
         rotate([90, 0, 0])
-            rack(teeth = 5, module = 2, height = 4, width = 6);
+            rack(teeth = 5, gear_module = 2, height = 4, width = 6);
 }
 
 // 行星齿轮组
