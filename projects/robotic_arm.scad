@@ -170,35 +170,60 @@ module base_turntable() {
 
 // ---- 组装 ----
 module robotic_arm() {
+    shoulder_angle = -60;
+    elbow_angle = 75;
+    wrist_angle = -35;
+    base_height = 8;
+    shoulder_z = base_height + 5;
+
     // 底座
     color("darkgray")
         base_turntable();
 
     // 底座旋转关节
-    translate([0, 0, 8])
+    translate([0, 0, shoulder_z])
         color("silver")
             revolute_joint(joint_od, joint_id, 10);
 
-    // 上臂
-    translate([0, 0, 8])
-        rotate([0, -60, 0])
+    // 分层级装配：每个 translate/rotate 块都会把后续子链带到新的关节坐标系
+    translate([0, 0, shoulder_z])
+        rotate([0, shoulder_angle, 0]) {
+            // 上臂
             color("steelblue")
                 link(link2_len, 15, 8);
 
-    // 肘关节
-    translate([0, 0, 8])
-        rotate([0, -60, 0])
-            translate([link2_len, 0, 0])
+            // 肘关节与前臂
+            translate([link2_len, 0, 0]) {
                 color("silver")
                     revolute_joint(25, 6, 8);
 
-    // TODO: 由于 OpenSCAD 的层级限制,这里展示概念
-    // 实际项目需分层级的 transform 传递
+                rotate([0, elbow_angle, 0]) {
+                    color("royalblue")
+                        link(link3_len, 13, 7);
+
+                    // 腕关节、短腕连杆与末端夹爪
+                    translate([link3_len, 0, 0]) {
+                        color("silver")
+                            revolute_joint(20, 5, 7);
+
+                        rotate([0, wrist_angle, 0]) {
+                            color("deepskyblue")
+                                link(link4_len, 10, 6);
+
+                            translate([link4_len, 0, 0])
+                                rotate([90, 0, 0])
+                                    color("orange")
+                                        gripper(width = 28, opening = 16, height = 18);
+                        }
+                    }
+                }
+            }
+        }
 }
 
 robotic_arm();
 
-// 末端执行器展示
-translate([80, 0, 0])
+// 末端执行器单独展示
+translate([95, -35, 0])
     rotate([90, 0, 0])
         gripper(width = 30, opening = 20, height = 25);
