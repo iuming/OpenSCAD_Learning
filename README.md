@@ -32,6 +32,11 @@ OpenSCAD_Learning/
 
 3. 打开任意 `.scad` 文件，按 `F5` 预览，按 `F6` 渲染导出。更多命令行导出方式见 `RUNNING.md`。
 
+
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=iuming/OpenSCAD_Learning&type=Date)](https://www.star-history.com/#iuming/OpenSCAD_Learning&Date)
+
 ## 内容总览
 
 | 难度 | 数量 | 涵盖主题 |
